@@ -46,6 +46,14 @@ def find_peak_hour(dates)
  grouped.max_by{|h, v| v.count}.first
 end
 
+def find_peak_day(dates)
+  parsed_dates = dates.map do |date|
+    DateTime.strptime date, '%m/%d/%y %H:%M'
+  end
+  grouped = parsed_dates.group_by {|date| date.strftime('%A')}
+  grouped.max_by{|h, v| v.count}.first
+end
+
 # --------------------------------------
 
 puts 'EventManager initialized.'
@@ -73,3 +81,4 @@ contents.each do |row|
 end
 
 puts find_peak_hour(dates)
+puts find_peak_day(dates)
