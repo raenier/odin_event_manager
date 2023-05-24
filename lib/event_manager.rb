@@ -38,6 +38,14 @@ def save_thank_you_letter(id, form_letter)
   end
 end
 
+def find_peak_hour(dates)
+ parsed_dates = dates.map do |date|
+  DateTime.strptime date, '%m/%d/%y %H:%M'
+ end
+ grouped = parsed_dates.group_by {|date| date.hour}
+ grouped.max_by{|h, v| v.count}.first
+end
+
 # --------------------------------------
 
 puts 'EventManager initialized.'
@@ -50,11 +58,11 @@ contents = CSV.open(
 
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
-
+dates = []
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
-  p clean_phone_number(row[:homephone])
+  dates << row[:regdate]
 
   zipcode = clean_zip(row[:zipcode])
   legislators = legislators_by_zipcode(zipcode)
@@ -63,3 +71,5 @@ contents.each do |row|
   #output to a file
   save_thank_you_letter(id, form_letter)
 end
+
+puts find_peak_hour(dates)
